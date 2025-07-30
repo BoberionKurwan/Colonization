@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(WorkerMover), typeof(WorkerTaker))]
@@ -15,15 +16,12 @@ public class Worker : MonoBehaviour
 
     private WorkerState _state = WorkerState.Idle;
 
-    public event Action<Rock> RockDelivered;
-
-    public bool IsIdle() => _state == WorkerState.Idle;
+    public event Action<Rock, Worker> RockDelivered;
 
     private enum WorkerState
     {
         Idle,
         MovingToRock,
-        CarryingRock,
         MovingToStorage
     }
 
@@ -51,14 +49,14 @@ public class Worker : MonoBehaviour
             case WorkerState.MovingToStorage:
                 _workerMover.MoveToTarget(_storagePoint.position);
 
-                if(IsTargetReached(_storagePoint.position))
+                if (IsTargetReached(_storagePoint.position))
                 {
                     DeliverRock();
                 }
 
                 break;
         }
-    }   
+    }
 
     public void SetTarget(Rock rock)
     {
@@ -79,9 +77,7 @@ public class Worker : MonoBehaviour
     {
         if (_currentRock == null) return;
 
-        RockDelivered?.Invoke(_currentRock);
-        _currentRock.transform.SetParent(null);
-        _currentRock = null;
+        RockDelivered?.Invoke(_currentRock, this);
         _state = WorkerState.Idle;
     }
 
