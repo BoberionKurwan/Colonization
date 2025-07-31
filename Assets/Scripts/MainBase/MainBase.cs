@@ -1,43 +1,52 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(Scaner), typeof(Storage), typeof(WorkerSpawner))]
+[RequireComponent(typeof(Scanner), typeof(Storage), typeof(WorkerSpawner))]
+[RequireComponent(typeof(InputReader))]
 public class MainBase : MonoBehaviour
 {
     [SerializeField] private int _spawnWorkerCount = 3;
     [SerializeField] private Transform _storageCollectionPoint;
 
-    private Scaner _scaner;
+    private Scanner _scanner;
     private Storage _storage;
     private WorkerSpawner _workerSpawner;
+    private InputReader _inputReader;
 
     private List<Rock> _rocks;
     private List<Worker> _workers = new List<Worker>();
 
     private void Awake()
     {
-        _scaner = GetComponent<Scaner>();
+        _scanner = GetComponent<Scanner>();
         _storage = GetComponent<Storage>();
         _workerSpawner = GetComponent<WorkerSpawner>();
+        _inputReader = GetComponent<InputReader>();
     }
 
     private void Start()
     {
         _workerSpawner.WorkerSpawned += AddWorker;
 
-        _rocks = _scaner.GetRocks();
+        _rocks = _scanner.GetRocks();
         _workerSpawner.Spawn(_spawnWorkerCount);
+
+        _inputReader.SpaceClicked += SetTasks;
+        _inputReader.EClicked += ScanForRocks;
     }
 
-    private void Update()
+    private void OnDestroy()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            GetToWork();
-        }
+        _inputReader.SpaceClicked -= SetTasks;
+        _inputReader.EClicked -= ScanForRocks;
     }
 
-    private void GetToWork()
+    private void ScanForRocks()
+    {
+        _rocks = _scanner.GetRocks();
+    }
+
+    private void SetTasks()
     {
         int count = Mathf.Min(_workers.Count, _rocks.Count);
 

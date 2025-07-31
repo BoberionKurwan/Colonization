@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Scaner : MonoBehaviour
+public class Scanner : MonoBehaviour
 {
     [SerializeField] private float _scanRadius;
     [SerializeField] private LayerMask _layerMask;

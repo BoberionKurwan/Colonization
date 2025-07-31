@@ -17,7 +17,7 @@ public class Storage : MonoBehaviour
         if (CollectedRockCount < storageCapacity)
         {
             CollectedRockCount++;
-            Destroy(rock.gameObject);
+            rock.InvokeReturnToPool();
             CollectedRock?.Invoke();
         }
         else
