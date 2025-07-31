@@ -33,7 +33,7 @@ public class RockSpawner : MonoBehaviour
     {
         Rock rock = _rocks.FirstOrDefault(rock => !rock.isActiveAndEnabled);
 
-        if (rock != null)
+        if (rock == null)
         {
             rock = Instantiate(_prefab);
             _rocks.Add(rock);
@@ -52,7 +52,6 @@ public class RockSpawner : MonoBehaviour
         _spawnPoints.ClearBusyPoint(rock.SpawnPoint);
         rock.gameObject.SetActive(false);
         rock.ReturnToPool -= ReleaseRock;
-
     }
 
     private IEnumerator SpawnRoutine()

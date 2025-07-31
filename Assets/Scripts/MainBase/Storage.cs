@@ -5,7 +5,7 @@ public class Storage : MonoBehaviour
 {
     [SerializeField] private Vector3 _offset;
 
-    private int storageCapacity = 10;
+    private int _storageCapacity = 10;
 
     public bool IsStorageFull { get; private set; }
     public int CollectedRockCount { get; private set; }
@@ -14,7 +14,7 @@ public class Storage : MonoBehaviour
 
     public void StoreRock(Rock rock)
     {
-        if (CollectedRockCount < storageCapacity)
+        if (CollectedRockCount < _storageCapacity)
         {
             CollectedRockCount++;
             rock.InvokeReturnToPool();

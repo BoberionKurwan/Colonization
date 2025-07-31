@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class MainBase : MonoBehaviour
 {
     [SerializeField] private int _spawnWorkerCount = 3;
-    [SerializeField] private Transform _storageCollectionPoint;
+    [SerializeField] private BotRetriever _storageCollectionPoint;
 
     private Scanner _scanner;
     private Storage _storage;
@@ -33,6 +33,8 @@ public class MainBase : MonoBehaviour
 
         _inputReader.SpaceClicked += SetTasks;
         _inputReader.EClicked += ScanForRocks;
+
+        _storageCollectionPoint.WorkerEntered += OnRockDelivered;
     }
 
     private void OnDestroy()
@@ -50,13 +52,14 @@ public class MainBase : MonoBehaviour
     {
         int count = Mathf.Min(_workers.Count, _rocks.Count);
 
-        for (int i = 0; i < _workers.Count; i++)
-        { 
-            _workers[i].SetTarget(_rocks[i]);
-            _workers[i].SetStorage(_storageCollectionPoint);
-            _workers[i].RockDelivered += OnRockDelivered;
-            _workers[i].SetStateMovingToRock();
-            _rocks.RemoveAt(i);
+        for (int i = 0; i < count; i++)
+        {
+            if (_workers[i].IsFree)
+            {
+                _workers[i].SetTarget(_rocks[i]);
+                _workers[i].SetStorage(_storageCollectionPoint.transform);
+                _rocks.RemoveAt(i);
+            }
         }
     }
 
@@ -65,10 +68,11 @@ public class MainBase : MonoBehaviour
         _workers.Add(worker);
     }
 
-    private void OnRockDelivered(Rock rock, Worker worker)
+    private void OnRockDelivered(Worker worker)
     {
-        _storage.StoreRock(rock);
+        Rock rock = worker.GiveRock();
 
-        worker.RockDelivered -= OnRockDelivered;        
+        if (rock != null)
+            _storage.StoreRock(rock);
     }
 }

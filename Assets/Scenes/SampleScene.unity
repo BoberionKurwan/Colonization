@@ -2563,6 +2563,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1929037567}
+  - component: {fileID: 1929037568}
+  - component: {fileID: 1929037569}
   m_Layer: 0
   m_Name: StorageCollectionPoint
   m_TagString: Untagged
@@ -2579,12 +2581,45 @@ Transform:
   m_GameObject: {fileID: 1929037566}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.535, z: -1.306}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1847253302}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1929037568
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929037566}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1929037569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929037566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8437dc824e30974429087f5538ba17e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1954408547
 GameObject:
   m_ObjectHideFlags: 0
@@ -2828,11 +2863,12 @@ PrefabInstance:
     - target: {fileID: 5656759711241493732, guid: 8839d5f584dc2a14299b9a1a6cc6beb3, type: 3}
       propertyPath: _storageCollectionPoint
       value: 
-      objectReference: {fileID: 1929037567}
+      objectReference: {fileID: 1929037569}
     m_RemovedComponents:
     - {fileID: 768226520251371857, guid: 8839d5f584dc2a14299b9a1a6cc6beb3, type: 3}
     m_RemovedGameObjects:
     - {fileID: 5300872044722939882, guid: 8839d5f584dc2a14299b9a1a6cc6beb3, type: 3}
+    - {fileID: 421270620942132333, guid: 8839d5f584dc2a14299b9a1a6cc6beb3, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 1059135666565733966, guid: 8839d5f584dc2a14299b9a1a6cc6beb3, type: 3}
       insertIndex: -1

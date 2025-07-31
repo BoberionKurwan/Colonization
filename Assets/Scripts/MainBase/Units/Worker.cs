@@ -1,66 +1,39 @@
-using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
-[RequireComponent(typeof(WorkerMover), typeof(WorkerTaker))]
+[RequireComponent(typeof(WorkerMover), typeof(ResourceCollector))]
 public class Worker : MonoBehaviour
 {
-    [SerializeField] private float _distanceToTarget = 1f;
-
     private WorkerMover _workerMover;
-    private WorkerTaker _workerTaker;
+    private ResourceCollector _resourceCollector;
 
-    private Rock _currentRock;
+    private Vector3 _targetPosition;
     private Transform _storagePoint;
 
-
-    private WorkerState _state = WorkerState.Idle;
-
-    public event Action<Rock, Worker> RockDelivered;
-
-    private enum WorkerState
-    {
-        Idle,
-        MovingToRock,
-        MovingToStorage
-    }
+    public bool IsFree;
 
     private void Awake()
     {
         _workerMover = GetComponent<WorkerMover>();
-        _workerTaker = GetComponent<WorkerTaker>();
+        _resourceCollector = GetComponent<ResourceCollector>();
+    }
+
+    private void Start()
+    {
+        _resourceCollector.Collected += OnCollected;
     }
 
     private void FixedUpdate()
     {
-        switch (_state)
+        if (_targetPosition != Vector3.zero)
         {
-            case WorkerState.MovingToRock:
-                _workerMover.MoveToTarget(_currentRock.transform.position);
-
-                if (IsTargetReached(_currentRock.transform.position))
-                {
-                    _workerTaker.PickUpRock(_currentRock);
-                    _state = WorkerState.MovingToStorage;
-                }
-
-                break;
-
-            case WorkerState.MovingToStorage:
-                _workerMover.MoveToTarget(_storagePoint.position);
-
-                if (IsTargetReached(_storagePoint.position))
-                {
-                    DeliverRock();
-                }
-
-                break;
+            _workerMover.MoveToTarget(_targetPosition);
         }
     }
 
     public void SetTarget(Rock rock)
     {
-        _currentRock = rock;
+        _targetPosition = rock.transform.position;
+        _resourceCollector.SetTarget(rock);
     }
 
     public void SetStorage(Transform storagePoint)
@@ -68,21 +41,15 @@ public class Worker : MonoBehaviour
         _storagePoint = storagePoint;
     }
 
-    public void SetStateMovingToRock()
+    public Rock GiveRock()
     {
-        _state = WorkerState.MovingToRock;
+        IsFree = true;
+        return _resourceCollector.GiveRock();
     }
 
-    private void DeliverRock()
+    private void OnCollected()
     {
-        if (_currentRock == null) return;
-
-        RockDelivered?.Invoke(_currentRock, this);
-        _state = WorkerState.Idle;
-    }
-
-    private bool IsTargetReached(Vector3 position)
-    {
-        return Vector3.Distance(transform.position, position) <= _distanceToTarget;
+        IsFree = false;
+        _targetPosition = _storagePoint.position;
     }
 }
