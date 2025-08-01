@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class MainBase : MonoBehaviour
 {
     [SerializeField] private int _spawnWorkerCount = 3;
-    [SerializeField] private BotRetriever _storageCollectionPoint;
+    [SerializeField] private BotRetriever _botRetriever;
 
     private Scanner _scanner;
     private Storage _storage;
@@ -26,21 +26,22 @@ public class MainBase : MonoBehaviour
 
     private void Start()
     {
-        _workerSpawner.WorkerSpawned += AddWorker;
+        _inputReader.SpaceClicked += SendWorkersToCollect;
+        _inputReader.EClicked += ScanForRocks;
+        _botRetriever.WorkerEntered += OnRockDelivered;
 
         _rocks = _scanner.GetRocks();
-        _workerSpawner.Spawn(_spawnWorkerCount);
 
-        _inputReader.SpaceClicked += SetTasks;
-        _inputReader.EClicked += ScanForRocks;
+        for (int i = 0; i < _spawnWorkerCount; i++)
+            _workers.Add(_workerSpawner.Spawn());
 
-        _storageCollectionPoint.WorkerEntered += OnRockDelivered;
     }
 
     private void OnDestroy()
     {
-        _inputReader.SpaceClicked -= SetTasks;
+        _inputReader.SpaceClicked -= SendWorkersToCollect;
         _inputReader.EClicked -= ScanForRocks;
+        _botRetriever.WorkerEntered -= OnRockDelivered;
     }
 
     private void ScanForRocks()
@@ -48,7 +49,7 @@ public class MainBase : MonoBehaviour
         _rocks = _scanner.GetRocks();
     }
 
-    private void SetTasks()
+    private void SendWorkersToCollect()
     {
         int count = Mathf.Min(_workers.Count, _rocks.Count);
 
@@ -57,15 +58,10 @@ public class MainBase : MonoBehaviour
             if (_workers[i].IsFree)
             {
                 _workers[i].SetTarget(_rocks[i]);
-                _workers[i].SetStorage(_storageCollectionPoint.transform);
+                _workers[i].SetStorage(_botRetriever.transform);
                 _rocks.RemoveAt(i);
             }
         }
-    }
-
-    private void AddWorker(Worker worker)
-    {
-        _workers.Add(worker);
     }
 
     private void OnRockDelivered(Worker worker)

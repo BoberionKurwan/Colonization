@@ -12,7 +12,7 @@ public class Scanner : MonoBehaviour
     {
         Scan();
 
-        return _rocks;
+        return new List<Rock>(_rocks);
     }
 
     private void Scan()
@@ -25,7 +25,8 @@ public class Scanner : MonoBehaviour
         {
             Rock rock = hitCollider.GetComponent<Rock>();
 
-            _rocks.Add(rock);
+            if (rock.isActiveAndEnabled)
+                _rocks.Add(rock);
         }
     }
 }
