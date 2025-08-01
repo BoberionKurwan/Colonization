@@ -6,7 +6,7 @@ public class Worker : MonoBehaviour
     private WorkerMover _workerMover;
     private ResourceCollector _resourceCollector;
 
-    private Vector3 _targetPosition;
+    private Transform _targetPosition;
     private Transform _storagePoint;
 
     public bool IsFree;
@@ -24,15 +24,15 @@ public class Worker : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_targetPosition != Vector3.zero)
+        if (_targetPosition.position != null)
         {
-            _workerMover.MoveToTarget(_targetPosition);
+            _workerMover.MoveToTarget(_targetPosition.position);
         }
     }
 
     public void SetTarget(Rock rock)
     {
-        _targetPosition = rock.transform.position;
+        _targetPosition = rock.transform;
         _resourceCollector.SetTarget(rock);
     }
 
@@ -49,7 +49,6 @@ public class Worker : MonoBehaviour
 
     private void OnCollected()
     {
-        IsFree = false;
-        _targetPosition = _storagePoint.position;
+        _targetPosition = _storagePoint;
     }
 }

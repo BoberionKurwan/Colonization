@@ -26,8 +26,8 @@ public class MainBase : MonoBehaviour
 
     private void Start()
     {
-        _inputReader.SpaceClicked += SendWorkersToCollect;
-        _inputReader.EClicked += ScanForRocks;
+        _inputReader.SendWorkersToCollect += SendWorkersToCollect;
+        _inputReader.ScanForResourses += ScanForRocks;
         _botRetriever.WorkerEntered += OnRockDelivered;
 
         _rocks = _scanner.GetRocks();
@@ -39,8 +39,8 @@ public class MainBase : MonoBehaviour
 
     private void OnDestroy()
     {
-        _inputReader.SpaceClicked -= SendWorkersToCollect;
-        _inputReader.EClicked -= ScanForRocks;
+        _inputReader.SendWorkersToCollect -= SendWorkersToCollect;
+        _inputReader.ScanForResourses -= ScanForRocks;
         _botRetriever.WorkerEntered -= OnRockDelivered;
     }
 
@@ -57,6 +57,7 @@ public class MainBase : MonoBehaviour
         {
             if (_workers[i].IsFree)
             {
+                _workers[i].IsFree = false;
                 _workers[i].SetTarget(_rocks[i]);
                 _workers[i].SetStorage(_botRetriever.transform);
                 _rocks.RemoveAt(i);
