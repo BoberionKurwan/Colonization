@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 [RequireComponent(typeof(Scanner), typeof(Storage), typeof(WorkerSpawner))]
 [RequireComponent(typeof(InputReader))]
@@ -11,9 +12,7 @@ public class MainBase : MonoBehaviour
     private Scanner _scanner;
     private Storage _storage;
     private WorkerSpawner _workerSpawner;
-    private InputReader _inputReader;
 
-    private List<Rock> _rocks;
     private List<Worker> _workers = new List<Worker>();
 
     private void Awake()
@@ -21,35 +20,23 @@ public class MainBase : MonoBehaviour
         _scanner = GetComponent<Scanner>();
         _storage = GetComponent<Storage>();
         _workerSpawner = GetComponent<WorkerSpawner>();
-        _inputReader = GetComponent<InputReader>();
     }
 
     private void Start()
     {
-        _inputReader.SendWorkersToCollect += SendWorkersToCollect;
-        _inputReader.ScanForResourses += ScanForRocks;
         _botRetriever.WorkerEntered += OnRockDelivered;
-
-        _rocks = _scanner.GetRocks();
+        _scanner.TerrainScanned += SendWorkersToCollect;
 
         for (int i = 0; i < _spawnWorkerCount; i++)
             _workers.Add(_workerSpawner.Spawn());
-
     }
 
     private void OnDestroy()
     {
-        _inputReader.SendWorkersToCollect -= SendWorkersToCollect;
-        _inputReader.ScanForResourses -= ScanForRocks;
         _botRetriever.WorkerEntered -= OnRockDelivered;
     }
 
-    private void ScanForRocks()
-    {
-        _rocks = _scanner.GetRocks();
-    }
-
-    private void SendWorkersToCollect()
+    private void SendWorkersToCollect(List<Rock> _rocks)
     {
         int count = Mathf.Min(_workers.Count, _rocks.Count);
 
@@ -57,7 +44,6 @@ public class MainBase : MonoBehaviour
         {
             if (_workers[i].IsFree)
             {
-                _workers[i].IsFree = false;
                 _workers[i].SetTarget(_rocks[i]);
                 _workers[i].SetStorage(_botRetriever.transform);
                 _rocks.RemoveAt(i);

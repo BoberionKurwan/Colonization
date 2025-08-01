@@ -2456,6 +2456,70 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f885194362a25c4089305e063610b34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spawnPointsBuffer:
+  - {fileID: 322548140}
+  - {fileID: 1551843917}
+  - {fileID: 1242829064}
+  - {fileID: 731542763}
+  - {fileID: 180223197}
+  - {fileID: 272684975}
+  - {fileID: 2043877250}
+  - {fileID: 1786343423}
+  - {fileID: 219348645}
+  - {fileID: 1423422881}
+  - {fileID: 1121598573}
+  - {fileID: 510602357}
+  - {fileID: 1261585860}
+  - {fileID: 1233908238}
+  - {fileID: 418939440}
+  - {fileID: 940417210}
+  - {fileID: 605345275}
+  - {fileID: 950870525}
+  - {fileID: 840059112}
+  - {fileID: 988072998}
+  - {fileID: 601353814}
+  - {fileID: 539312644}
+  - {fileID: 601191796}
+  - {fileID: 1279962135}
+  - {fileID: 1333367068}
+  - {fileID: 200347723}
+  - {fileID: 1576419533}
+  - {fileID: 445850743}
+  - {fileID: 451663076}
+  - {fileID: 1921288867}
+  - {fileID: 449555758}
+  - {fileID: 887522260}
+  - {fileID: 129890135}
+  - {fileID: 569981894}
+  - {fileID: 1637479258}
+  - {fileID: 1821113471}
+  - {fileID: 909249047}
+  - {fileID: 1363291228}
+  - {fileID: 1001833772}
+  - {fileID: 221965102}
+  - {fileID: 768166879}
+  - {fileID: 77447287}
+  - {fileID: 789787957}
+  - {fileID: 342263469}
+  - {fileID: 1896550110}
+  - {fileID: 2026532326}
+  - {fileID: 854669308}
+  - {fileID: 846921311}
+  - {fileID: 1840024710}
+  - {fileID: 945706494}
+  - {fileID: 1437250607}
+  - {fileID: 909981337}
+  - {fileID: 753871115}
+  - {fileID: 51233413}
+  - {fileID: 1152706578}
+  - {fileID: 1335540318}
+  - {fileID: 1421835866}
+  - {fileID: 39367888}
+  - {fileID: 873985602}
+  - {fileID: 1954408548}
+  - {fileID: 350772023}
+  - {fileID: 391394738}
+  - {fileID: 339382792}
 --- !u!1 &1840024709
 GameObject:
   m_ObjectHideFlags: 0
@@ -2776,6 +2840,14 @@ PrefabInstance:
     - target: {fileID: 1274358175569762572, guid: 8839d5f584dc2a14299b9a1a6cc6beb3, type: 3}
       propertyPath: m_Name
       value: Base
+      objectReference: {fileID: 0}
+    - target: {fileID: 4048179830406329055, guid: 8839d5f584dc2a14299b9a1a6cc6beb3, type: 3}
+      propertyPath: _delay
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4048179830406329055, guid: 8839d5f584dc2a14299b9a1a6cc6beb3, type: 3}
+      propertyPath: _radius
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

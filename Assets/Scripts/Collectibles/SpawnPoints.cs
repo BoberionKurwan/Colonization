@@ -3,39 +3,48 @@ using UnityEngine;
 
 public class SpawnPoints : MonoBehaviour
 {
+    [SerializeField] private List<Transform> _spawnPointsBuffer = new List<Transform>();
     private List<Transform> _emptySpawnPoints = new List<Transform>();
     private List<Transform> _busySpawnPoints = new List<Transform>();
 
+    public int GetEmptyCount() => _emptySpawnPoints.Count;
+
     private void Awake()
     {
-        RefreshChildArray();
+        _emptySpawnPoints = new List<Transform>(_spawnPointsBuffer);
     }
 
-    public Transform GetRandomEmptyPoint()
+    public bool TryGetRandomEmptyPoint(out Transform point)
     {
-        int randomIndex = Random.Range(0, _emptySpawnPoints.Count);
-        Transform point = _emptySpawnPoints[randomIndex];
-        _busySpawnPoints.Add(_emptySpawnPoints[randomIndex]);
-        _emptySpawnPoints.RemoveAt(randomIndex);
-        return point;
+        if (_emptySpawnPoints.Count != 0)
+        {
+            int randomIndex = Random.Range(0, _emptySpawnPoints.Count);
+            point = _emptySpawnPoints[randomIndex];
+            _busySpawnPoints.Add(_emptySpawnPoints[randomIndex]);
+            _emptySpawnPoints.RemoveAt(randomIndex);
+            return true;
+        }
+        else
+        {
+            point = null;
+            return false;
+        }
     }
 
-    public void ClearBusyPoint(Transform point)
+    public void ReleaseSpawnPoint(Transform point)
     {
         _emptySpawnPoints.Add(point);
         _busySpawnPoints.Remove(point);
     }
 
-    public int GetEmptyCount()
-    {
-        return _emptySpawnPoints.Count;
-    }
-
+#if UNITY_EDITOR
+    [ContextMenu("Refresh Child Array")]
     private void RefreshChildArray()
     {
-        _emptySpawnPoints.Clear();
+        _spawnPointsBuffer.Clear();
 
         foreach (Transform child in transform)
-            _emptySpawnPoints.Add(child);
+            _spawnPointsBuffer.Add(child);
     }
+#endif
 }

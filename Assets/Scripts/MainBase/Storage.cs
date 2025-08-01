@@ -3,14 +3,12 @@ using UnityEngine;
 
 public class Storage : MonoBehaviour
 {
-    [SerializeField] private Vector3 _offset;
-
     private int _storageCapacity = 10;
+
+    public event Action CollectedRock;
 
     public bool IsStorageFull { get; private set; }
     public int CollectedRockCount { get; private set; }
-
-    public event Action CollectedRock;
 
     public void StoreRock(Rock rock)
     {

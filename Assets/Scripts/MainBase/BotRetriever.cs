@@ -7,7 +7,7 @@ public class BotRetriever : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out Worker worker))
+        if (other.TryGetComponent(out Worker worker) && worker.IsCarryingResource)
         {
             WorkerEntered?.Invoke(worker);
         }

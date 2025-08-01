@@ -9,6 +9,6 @@ public class WorkerMover : MonoBehaviour
         transform.position = Vector3.MoveTowards(
             transform.position,
             target,
-            _speed * Time.deltaTime);
+            _speed * Time.fixedDeltaTime);
     }
 }

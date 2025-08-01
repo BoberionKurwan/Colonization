@@ -29,7 +29,7 @@ public class RockSpawner : MonoBehaviour
         _spawnCoroutine = StartCoroutine(SpawnRoutine());
     }
 
-    private Rock GetRock(Transform point)
+    private Rock Get(Transform point)
     {
         Rock rock = _rocks.FirstOrDefault(rock => !rock.isActiveAndEnabled);
 
@@ -41,7 +41,7 @@ public class RockSpawner : MonoBehaviour
 
         rock.gameObject.SetActive(true);
         rock.transform.position = point.position;
-        rock.ReturnToPool += ReleaseRock;
+        rock.Collected += ReleaseRock;
         rock.SpawnPoint = point;
 
         return rock;
@@ -49,9 +49,9 @@ public class RockSpawner : MonoBehaviour
 
     private void ReleaseRock(Rock rock)
     {
-        _spawnPoints.ClearBusyPoint(rock.SpawnPoint);
+        _spawnPoints.ReleaseSpawnPoint(rock.SpawnPoint);
         rock.gameObject.SetActive(false);
-        rock.ReturnToPool -= ReleaseRock;
+        rock.Collected -= ReleaseRock;
     }
 
     private IEnumerator SpawnRoutine()
@@ -60,9 +60,9 @@ public class RockSpawner : MonoBehaviour
 
         while (enabled)
         {
-            if (_spawnPoints.GetEmptyCount() > 0)
+            if (_spawnPoints.TryGetRandomEmptyPoint(out Transform point))
             {
-                GetRock(_spawnPoints.GetRandomEmptyPoint());
+                Get(point);
             }
             yield return delay;
         }

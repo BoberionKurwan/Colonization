@@ -7,19 +7,6 @@ public class RockPool : MonoBehaviour
     private Rock _rockPrefab;
     private List<Rock> _rocks;
 
-    public RockPool(Rock rockPrefab, int prewarmRocks)
-    {
-        _rockPrefab = rockPrefab;
-        _rocks = new List<Rock>();
-
-        for (int i = 0; i < prewarmRocks; i++)
-        {
-            Rock rock = Instantiate(_rockPrefab);
-            rock.gameObject.SetActive(false);
-            _rocks.Add(rock);
-        }
-    }
-
     public Rock Get(Transform point)
     {
         Rock rock = _rocks.FirstOrDefault(rock => !rock.isActiveAndEnabled);
@@ -29,7 +16,7 @@ public class RockPool : MonoBehaviour
 
         rock.gameObject.SetActive(true);
         rock.transform.position = point.position;
-        rock.ReturnToPool += Release;
+        rock.Collected += Release;
         rock.SpawnPoint = point;
 
         return rock;
@@ -38,7 +25,7 @@ public class RockPool : MonoBehaviour
     public void Release(Rock rock)
     {
         rock.gameObject.SetActive(false);
-        rock.ReturnToPool -= Release;
+        rock.Collected -= Release;
     }
 
     private Rock Create()

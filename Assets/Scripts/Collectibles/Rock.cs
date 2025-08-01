@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class Rock : MonoBehaviour
 {
-    public event Action<Rock> ReturnToPool;
+    public event Action<Rock> Collected;
 
     public Transform SpawnPoint;
 
     public void InvokeReturnToPool()
     {
-        ReturnToPool.Invoke(this);
+        Collected.Invoke(this);
     }
 }
