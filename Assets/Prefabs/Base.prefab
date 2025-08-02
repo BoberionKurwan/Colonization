@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 6900624968609361434}
   - component: {fileID: 5656759711241493732}
   - component: {fileID: 1001621137150191061}
-  - component: {fileID: 4048179830406329055}
   - component: {fileID: 3232079067935711698}
   m_Layer: 0
   m_Name: Base
@@ -157,7 +156,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c74707f2c08e2043a190f1eec4a0540, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _offset: {x: 0, y: 0.5, z: 0}
 --- !u!114 &5656759711241493732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,6 +170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spawnWorkerCount: 3
   _botRetriever: {fileID: 2112492864540352947}
+  _scanner: {fileID: 0}
 --- !u!114 &1001621137150191061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,22 +185,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _prefab: {fileID: 7520818101580198157, guid: f0874a21221121e459cf292898bc774c, type: 3}
   _spawnPoint: {fileID: 7559346589026697659}
---- !u!114 &4048179830406329055
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1274358175569762572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d76598ae52b6b284b883375cce3b176f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _scanRadius: 100
-  _layerMask:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!114 &3232079067935711698
 MonoBehaviour:
   m_ObjectHideFlags: 0

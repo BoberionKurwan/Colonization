@@ -1,24 +1,25 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
-[RequireComponent(typeof(Scanner), typeof(Storage), typeof(WorkerSpawner))]
-[RequireComponent(typeof(InputReader))]
+[RequireComponent(typeof(InputReader), typeof(Storage), typeof(WorkerSpawner))]
 public class MainBase : MonoBehaviour
 {
-    [SerializeField] private int _spawnWorkerCount = 3;
     [SerializeField] private BotRetriever _botRetriever;
+    [SerializeField] ResourcesRepository _resoucesRepository;
 
-    private Scanner _scanner;
     private Storage _storage;
     private WorkerSpawner _workerSpawner;
+    private Coroutine _collectCoroutine;
 
     private List<Worker> _workers = new List<Worker>();
 
+    private int _spawnWorkerCount = 3;
     private int _workerPrice = 3;
+    private float _delay = 4;
 
     private void Awake()
     {
-        _scanner = GetComponent<Scanner>();
         _storage = GetComponent<Storage>();
         _workerSpawner = GetComponent<WorkerSpawner>();
     }
@@ -26,34 +27,35 @@ public class MainBase : MonoBehaviour
     private void Start()
     {
         _botRetriever.WorkerEntered += OnRockDelivered;
-        _scanner.TerrainScanned += SendWorkersToCollect;
+
+        _collectCoroutine = StartCoroutine(CollectResourses());
 
         for (int i = 0; i < _spawnWorkerCount; i++)
-            _workers.Add(_workerSpawner.Spawn());
+        {
+            Worker worker = _workerSpawner.Spawn();
+            worker.SetStorage(_botRetriever.transform);
+            _workers.Add(worker);
+        }
     }
 
     private void OnDestroy()
     {
         _botRetriever.WorkerEntered -= OnRockDelivered;
-        _scanner.TerrainScanned -= SendWorkersToCollect;
     }
 
-    private void SendWorkersToCollect(List<Rock> _rocks)
+    private void SendWorkersToCollect()
     {
-        List<Rock> rocksToCollect = new List<Rock>(_rocks);
-
-        int count = Mathf.Min(_workers.Count, rocksToCollect.Count);
-
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < _workers.Count; i++)
         {
             if (_workers[i].IsFree)
             {
-                _workers[i].SetTarget(rocksToCollect[0]);
-                _workers[i].SetStorage(_botRetriever.transform);
-                rocksToCollect.RemoveAt(0);
+                if (_resoucesRepository.TryGetRock(out Rock rock))
+                {
+                    _workers[i].SetTarget(rock);
+                }
             }
         }
-    } 
+    }
 
     private void OnRockDelivered(Worker worker)
     {
@@ -65,7 +67,22 @@ public class MainBase : MonoBehaviour
         if (_storage.CollectedCount >= _workerPrice)
         {
             _storage.SpendResources(_workerPrice);
-            _workers.Add(_workerSpawner.Spawn());
+
+            Worker newWorker = _workerSpawner.Spawn();
+            newWorker.SetStorage(_botRetriever.transform);
+            _workers.Add(worker);
+        }
+    }
+
+    private IEnumerator CollectResourses()
+    {
+        WaitForSeconds delay = new WaitForSeconds(_delay);
+
+        while (enabled)
+        {
+            SendWorkersToCollect();
+
+            yield return delay;
         }
     }
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class Scanner : MonoBehaviour
 {
@@ -9,9 +9,11 @@ public class Scanner : MonoBehaviour
     [SerializeField] private float _radius;
     [SerializeField] private LayerMask _layerMask;
 
+    HashSet<Rock> _resources = new HashSet<Rock>();
+
     private Coroutine _coroutine;
 
-    public event Action<List<Rock>> TerrainScanned;
+    public event Action<HashSet<Rock>> Scanned;
 
     private void Start()
     {
@@ -20,8 +22,6 @@ public class Scanner : MonoBehaviour
 
     private void Scan()
     {
-        List<Rock> rocks = new List<Rock>();
-
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, _radius, _layerMask);
 
         foreach (var hitCollider in hitColliders)
@@ -29,17 +29,17 @@ public class Scanner : MonoBehaviour
             Rock rock = hitCollider.GetComponent<Rock>();
 
             if (rock.isActiveAndEnabled)
-                rocks.Add(rock);
+                _resources.Add(rock);
         }
 
-        TerrainScanned?.Invoke(new List<Rock>(rocks));
+        Scanned?.Invoke(_resources);
     }
 
     private IEnumerator ScanRoutine()
     {
         WaitForSeconds delay = new WaitForSeconds(_delay);
 
-        while ( enabled)
+        while (enabled)
         {
             Scan();
 
