@@ -5,22 +5,28 @@ public class Storage : MonoBehaviour
 {
     private int _storageCapacity = 10;
 
-    public event Action CollectedRock;
-
+    public event Action CountChanged;
+    
     public bool IsStorageFull { get; private set; }
-    public int CollectedRockCount { get; private set; }
+    public int CollectedCount { get; private set; }
 
     public void StoreRock(Rock rock)
     {
-        if (CollectedRockCount < _storageCapacity)
+        if (CollectedCount < _storageCapacity)
         {
-            CollectedRockCount++;
+            CollectedCount++;
             rock.InvokeReturnToPool();
-            CollectedRock?.Invoke();
+            CountChanged?.Invoke();
         }
         else
         {
             IsStorageFull = true;
-        }
+        }        
+    }
+
+    public void SpendResources(int count)
+    {
+        CollectedCount -= count;
+        CountChanged?.Invoke();
     }
 }

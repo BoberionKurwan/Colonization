@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Collections;
 
 [RequireComponent(typeof(Scanner), typeof(Storage), typeof(WorkerSpawner))]
 [RequireComponent(typeof(InputReader))]
@@ -14,6 +13,8 @@ public class MainBase : MonoBehaviour
     private WorkerSpawner _workerSpawner;
 
     private List<Worker> _workers = new List<Worker>();
+
+    private int _workerPrice = 3;
 
     private void Awake()
     {
@@ -34,22 +35,25 @@ public class MainBase : MonoBehaviour
     private void OnDestroy()
     {
         _botRetriever.WorkerEntered -= OnRockDelivered;
+        _scanner.TerrainScanned -= SendWorkersToCollect;
     }
 
     private void SendWorkersToCollect(List<Rock> _rocks)
     {
-        int count = Mathf.Min(_workers.Count, _rocks.Count);
+        List<Rock> rocksToCollect = new List<Rock>(_rocks);
+
+        int count = Mathf.Min(_workers.Count, rocksToCollect.Count);
 
         for (int i = 0; i < count; i++)
         {
             if (_workers[i].IsFree)
             {
-                _workers[i].SetTarget(_rocks[i]);
+                _workers[i].SetTarget(rocksToCollect[0]);
                 _workers[i].SetStorage(_botRetriever.transform);
-                _rocks.RemoveAt(i);
+                rocksToCollect.RemoveAt(0);
             }
         }
-    }
+    } 
 
     private void OnRockDelivered(Worker worker)
     {
@@ -57,5 +61,11 @@ public class MainBase : MonoBehaviour
 
         if (rock != null)
             _storage.StoreRock(rock);
+
+        if (_storage.CollectedCount >= _workerPrice)
+        {
+            _storage.SpendResources(_workerPrice);
+            _workers.Add(_workerSpawner.Spawn());
+        }
     }
 }

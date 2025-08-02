@@ -10,17 +10,17 @@ public class RocksCollectedDisplay : MonoBehaviour
     {
         UpdateUI();
 
-        _storage.CollectedRock += UpdateUI;
+        _storage.CountChanged += UpdateUI;
     }
 
     private void OnDestroy()
     {
-        _storage.CollectedRock -= UpdateUI;
+        _storage.CountChanged -= UpdateUI;
     }
 
     private void UpdateUI()
     {
-        _text.text = $"Collected Rocks: {_storage.CollectedRockCount}";
+        _text.text = $"Collected Rocks: {_storage.CollectedCount}";
 
         if (_storage.IsStorageFull)
         {
