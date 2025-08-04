@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class BotRetriever : MonoBehaviour
+public class WorkerRetriever : MonoBehaviour
 {
     public event Action<Worker> WorkerEntered;
 

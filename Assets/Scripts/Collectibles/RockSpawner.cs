@@ -10,7 +10,6 @@ public class RockSpawner : MonoBehaviour
     [SerializeField] private float _delay = 0.2f;
 
     private List<Rock> _rocks;
-    private Coroutine _spawnCoroutine;
 
     private void Awake()
     {
@@ -26,7 +25,7 @@ public class RockSpawner : MonoBehaviour
 
     private void Start()
     {
-        _spawnCoroutine = StartCoroutine(SpawnRoutine());
+        StartCoroutine(SpawnRoutine());
     }
 
     private Rock Get(Transform point)
@@ -64,6 +63,7 @@ public class RockSpawner : MonoBehaviour
             {
                 Get(point);
             }
+
             yield return delay;
         }
     }

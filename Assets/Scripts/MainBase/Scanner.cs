@@ -9,15 +9,11 @@ public class Scanner : MonoBehaviour
     [SerializeField] private float _radius;
     [SerializeField] private LayerMask _layerMask;
 
-    HashSet<Rock> _resources = new HashSet<Rock>();
-
-    private Coroutine _coroutine;
-
-    public event Action<HashSet<Rock>> Scanned;
+    public event Action<Rock> FoundResource;
 
     private void Start()
     {
-        _coroutine = StartCoroutine(ScanRoutine());
+        StartCoroutine(ScanRoutine());
     }
 
     private void Scan()
@@ -29,10 +25,8 @@ public class Scanner : MonoBehaviour
             Rock rock = hitCollider.GetComponent<Rock>();
 
             if (rock.isActiveAndEnabled)
-                _resources.Add(rock);
+                FoundResource?.Invoke(rock);
         }
-
-        Scanned?.Invoke(_resources);
     }
 
     private IEnumerator ScanRoutine()

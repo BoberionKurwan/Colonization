@@ -378,7 +378,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40a2b14aa9d65a04e94b5f10c095d2c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _distanceToTarget: 3
 --- !u!114 &8949978612743360409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -391,8 +390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 065920b5b815cee42b0ce0effdf47f96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 6
-  _rotationSpeed: 1000
+  _speed: 20
 --- !u!114 &4380302962611582222
 MonoBehaviour:
   m_ObjectHideFlags: 0

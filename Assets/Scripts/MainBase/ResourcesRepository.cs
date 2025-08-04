@@ -5,18 +5,29 @@ using System.Linq;
 public class ResourcesRepository : MonoBehaviour
 {
     [SerializeField] private Scanner _scanner;
+    [SerializeField] private List<MainBase> _mainBases = new List<MainBase>();
 
-    private HashSet<Rock> _emptyResources = new HashSet<Rock>();
-    private HashSet<Rock> _busyResources = new HashSet<Rock>();
+    private readonly List<Rock> _emptyResources = new List<Rock>();
+    private readonly List<Rock> _busyResources = new List<Rock>();
 
     private void Start()
     {
-        _scanner.Scanned += SetResources;
+        _scanner.FoundResource += AddResource;
+
+        foreach (var building in _mainBases)
+        {
+            building.RockDelivered += ReturnRock;
+        }
     }
 
     private void OnDestroy()
     {
-        _scanner.Scanned -= SetResources;
+        _scanner.FoundResource -= AddResource;
+
+        foreach (var building in _mainBases)
+        {
+            building.RockDelivered += ReturnRock;
+        }
     }
 
     public bool TryGetRock(out Rock rock)
@@ -33,8 +44,28 @@ public class ResourcesRepository : MonoBehaviour
         return false;
     }
 
-    private void SetResources(HashSet<Rock> resources)
+    private void ReturnRock(Rock rock)
     {
-        _emptyResources = resources;
+        if (_busyResources.Contains(rock))
+        {
+            _busyResources.Remove(rock);
+            _emptyResources.Add(rock);
+        }
+        else if (!_emptyResources.Contains(rock))
+        {
+            _emptyResources.Add(rock);
+        }
+    }
+
+    private void AddResource(Rock rock)
+    {
+        if (_emptyResources.Contains(rock) || _busyResources.Contains(rock))
+        {
+            return;
+        }
+        else
+        {
+            _emptyResources.Add(rock);
+        }
     }
 }

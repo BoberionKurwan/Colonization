@@ -5,7 +5,8 @@ public class ResourceCollector : MonoBehaviour
 {
     [SerializeField] private Transform _carryingPosition;
 
-    private Rock _rock;
+    private Transform _target;
+    private Rock _currentRock;
 
     public event Action Collected;
 
@@ -13,7 +14,7 @@ public class ResourceCollector : MonoBehaviour
     {
         if (other.TryGetComponent(out Rock rock))
         {
-            if (rock == _rock)
+            if (rock.transform == _target)
             {
                 PickUpRock(rock);
                 Collected?.Invoke();
@@ -21,24 +22,25 @@ public class ResourceCollector : MonoBehaviour
         }
     }
 
-    public void SetTarget(Rock rock)
+    public void SetTarget(Transform target)
     {
-        _rock = rock;
+        _target = target;
     }
 
     public Rock GiveRock()
     {
-        if (_rock == null)
+        if (_currentRock == null)
             return null;
 
-        Rock rock = _rock;
-        _rock.transform.SetParent(null);
-        _rock = null;
-        return rock;
+        Rock rockToGive = _currentRock;
+        rockToGive.transform.SetParent(null);
+        _currentRock = null; 
+        return rockToGive;
     }
 
     private void PickUpRock(Rock rock)
     {
+        _currentRock = rock;
         rock.transform.position = _carryingPosition.position;
         rock.transform.SetParent(_carryingPosition);
     }
