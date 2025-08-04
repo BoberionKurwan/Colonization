@@ -17,6 +17,7 @@ public class MainBase : MonoBehaviour
     private WorkerRetriever _botRetriever;
     private FlagPlacer _flagPlacer;
 
+    private readonly int _workerMinCount = 1;
     private readonly int _workerPrice = 3;
     private readonly int _basePrice = 5;
     private readonly float _delay = 4;
@@ -126,7 +127,7 @@ public class MainBase : MonoBehaviour
             return;
         }
 
-        Rock rock = worker.GiveRock();
+        Rock rock = worker.GetRock();
 
         if (rock != null)
         {
@@ -136,11 +137,11 @@ public class MainBase : MonoBehaviour
 
         if (_flagPlacer.IsFlagActive)
         {
-            if (_storage.CollectedCount >= _basePrice && _workers.Count > 1)
+            if (_storage.CollectedCount >= _basePrice && _workers.Count > _workerMinCount)
             {
                 SendWorkerToBuild();
             }
-            else if (_storage.CollectedCount >= _workerPrice && _workers.Count == 1)
+            else if (_storage.CollectedCount >= _workerPrice && _workers.Count == _workerMinCount)
             {
                 BuildWorker();
             }

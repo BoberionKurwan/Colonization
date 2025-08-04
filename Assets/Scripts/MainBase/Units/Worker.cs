@@ -55,7 +55,7 @@ public class Worker : MonoBehaviour
         StoragePoint = storagePoint;
     }
 
-    public Rock GiveRock()
+    public Rock GetRock()
     {
         IsFree = true;
         IsCarryingResource = false;
