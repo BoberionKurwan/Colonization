@@ -4,171 +4,130 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 
-[RequireComponent(typeof(Storage), typeof(WorkerSpawner), typeof(WorkerRetriever))]
-[RequireComponent(typeof(FlagPlacer))]
-public class MainBase : MonoBehaviour
+namespace MainBase
 {
-    [SerializeField] private ResourcesRepository _resoucesRepository;
-    [SerializeField] private BaseBuilder _baseBuilder;
-    [SerializeField] private List<Worker> _workers = new List<Worker>();
-
-    private Storage _storage;
-    private WorkerSpawner _workerSpawner;
-    private WorkerRetriever _botRetriever;
-    private FlagPlacer _flagPlacer;
-
-    private readonly int _workerMinCount = 1;
-    private readonly int _workerPrice = 3;
-    private readonly int _basePrice = 5;
-    private readonly float _delay = 4;
-
-    public event Action<Rock> RockDelivered;
-    public event Action<Transform, Worker> BuildingBase;
-
-    private void Awake()
+    [RequireComponent(typeof(Storage), typeof(WorkerSpawner), typeof(WorkerRetriever))]
+    [RequireComponent(typeof(FlagPlacer), typeof(WorkerForeman))]
+    public class MainBase : MonoBehaviour
     {
-        _storage = GetComponent<Storage>();
-        _workerSpawner = GetComponent<WorkerSpawner>();
-        _botRetriever = GetComponent<WorkerRetriever>();
-        _flagPlacer = GetComponent<FlagPlacer>();
-    }
+        [SerializeField] private ResourcesRepository _resourcesRepository;
+        [SerializeField] private BaseBuilder _baseBuilder;
+        [SerializeField] private List<Worker> _workers = new List<Worker>();
 
-    private void OnEnable()
-    {
-        _botRetriever.WorkerEntered += OnRockDelivered;
-        _flagPlacer.WorkerCame += BuildBase;
-        StartCoroutine(CollectResourses());
-    }
+        private Storage _storage;
+        private WorkerSpawner _workerSpawner;
+        private WorkerRetriever _botRetriever;
+        private FlagPlacer _flagPlacer;
+        private WorkerForeman _workerForeman;
 
-    private void OnDisable()
-    {
-        _botRetriever.WorkerEntered -= OnRockDelivered;
-        _flagPlacer.WorkerCame -= BuildBase;
-    }
+        private readonly int _workerMinCount = 1;
+        private readonly int _workerPrice = 3;
+        private readonly int _basePrice = 5;
+        private readonly float _delay = 4;
 
-    public void Initialize(Worker worker, ResourcesRepository resourcesRepository, BaseBuilder baseBuilder)
-    {
-        AddWorker(worker);
-        _resoucesRepository = resourcesRepository;
-        _baseBuilder = baseBuilder;
+        public event Action<Rock> RockDelivered;
+        public event Action<Transform, Worker> BuildingBase;
 
-        if (_resoucesRepository.TryGetRock(out Rock rock))
+        private void Awake()
         {
-            worker.SetTarget(rock.transform);
+            _storage = GetComponent<Storage>();
+            _workerSpawner = GetComponent<WorkerSpawner>();
+            _botRetriever = GetComponent<WorkerRetriever>();
+            _flagPlacer = GetComponent<FlagPlacer>();
+            _workerForeman = GetComponent<WorkerForeman>();
         }
-    }
 
-    public void SpawnFlag(Vector3 position)
-    {
-        _flagPlacer.SetPosition(position);
-    }
-
-    public void AddWorker(Worker worker)
-    {
-        _workers.Add(worker);
-        worker.SetStorage(_storage.transform);
-    }
-
-    public ResourcesRepository GetRepository()
-    {
-        return _resoucesRepository;
-    }
-
-    private void SendWorkersToCollect()
-    {
-        for (int i = 0; i < _workers.Count; i++)
+        private void OnEnable()
         {
-            if (_workers[i].StoragePoint == null)
-                _workers[i].SetStorage(_botRetriever.transform);
+            _botRetriever.WorkerEntered += OnRockDelivered;
+            _flagPlacer.WorkerCame += BuildBase;
+            StartCoroutine(CollectResourсes());
+        }
 
-            if (_workers[i].IsFree)
+        private void OnDisable()
+        {
+            _botRetriever.WorkerEntered -= OnRockDelivered;
+            _flagPlacer.WorkerCame -= BuildBase;
+        }
+
+        public void Initialize(Worker worker, ResourcesRepository resourcesRepository, BaseBuilder baseBuilder)
+        {
+            AddWorker(worker);
+            _resourcesRepository = resourcesRepository;
+            _baseBuilder = baseBuilder;
+
+            if (_resourcesRepository.TryGetRock(out Rock rock))
             {
-                if (_resoucesRepository.TryGetRock(out Rock rock))
-                {
-                    _workers[i].SetTarget(rock.transform);
-                }
+                worker.SetTarget(rock.transform);
             }
         }
-    }
 
-    private void SendWorkerToBuild()
-    {
-        if (!_flagPlacer.IsFlagActive) return;
-
-        Worker worker = _workers.FirstOrDefault(worker => worker.IsFree);
-
-        if (worker != null)
+        public void SpawnFlag(Vector3 position)
         {
-            worker.SetTarget(_flagPlacer.GetFlagPosition());
-            _flagPlacer.SetWorker(worker);
-        }
-    }
-
-    private void BuildBase(Worker worker)
-    {
-        _storage.SpendResources(_basePrice);
-        BuildingBase?.Invoke(_flagPlacer.GetFlagPosition(), worker);
-        _workers.Remove(worker);
-    }
-
-    private void BuildWorker()
-    {
-        _storage.SpendResources(_workerPrice);
-
-        Worker newWorker = _workerSpawner.Spawn();
-        newWorker.SetStorage(_botRetriever.transform);
-        _workers.Add(newWorker);
-    }
-
-    private void OnRockDelivered(Worker worker)
-    {
-        if (_workers.Contains(worker) == false)
-        {
-            return;
+            _flagPlacer.SetPosition(position);
         }
 
-        Rock rock = worker.GetRock();
-
-        if (rock != null)
+        public ResourcesRepository GetRepository()
         {
+            return _resourcesRepository;
+        }
+
+        private void AddWorker(Worker worker)
+        {
+            _workers.Add(worker);
+            worker.SetStorage(_storage.transform);
+        }
+
+        private void BuildBase(Worker worker)
+        {
+            _storage.SpendResources(_basePrice);
+            BuildingBase?.Invoke(_flagPlacer.GetFlagPosition(), worker);
+            _workers.Remove(worker);
+        }
+
+        private void OnRockDelivered(Worker worker)
+        {
+            if (_workers.Contains(worker) == false)
+            {
+                return;
+            }
+
+            Rock rock = worker.GetRock();
             _storage.StoreRock(rock);
             RockDelivered?.Invoke(rock);
-        }
 
-        if (_flagPlacer.IsFlagActive)
-        {
-            if (_storage.CollectedCount >= _basePrice && _workers.Count > _workerMinCount)
+            if (_flagPlacer.IsFlagActive && _storage.CollectedCount >= _basePrice && _workers.Count > _workerMinCount)
             {
-                SendWorkerToBuild();
+                Worker freeWorker = _workers.FirstOrDefault(w => w.IsFree);
+                _workerForeman.SendWorkerToBuild(freeWorker, _flagPlacer.GetFlagPosition());
+                _flagPlacer.SetWorker(freeWorker);
             }
-            else if (_storage.CollectedCount >= _workerPrice && _workers.Count == _workerMinCount)
+            else if (_storage.CollectedCount >= _workerPrice)
             {
-                BuildWorker();
+                _storage.SpendResources(_workerPrice);
+                _workers.Add(_workerSpawner.BuildWorker(_botRetriever.transform));
             }
-            else
+            else if (_resourcesRepository.TryGetRock(out Rock targetRock))
             {
-                SendWorkersToCollect();
+                Transform target = targetRock.transform;
+                _workerForeman.SendWorkersToCollect(_workers, _botRetriever.transform, target);
             }
         }
-        else if (_storage.CollectedCount >= _workerPrice)
-        {
-            BuildWorker();
-        }
-        else
-        {
-            SendWorkersToCollect();
-        }
-    }
 
-    private IEnumerator CollectResourses()
-    {
-        WaitForSeconds delay = new WaitForSeconds(_delay);
-
-        while (enabled)
+        private IEnumerator CollectResourсes()
         {
-            SendWorkersToCollect();
+            WaitForSeconds delay = new WaitForSeconds(_delay);
 
-            yield return delay;
+            while (enabled)
+            {
+                if (_resourcesRepository.TryGetRock(out Rock targetRock))
+                {
+                    Transform target = targetRock.transform;
+                    _workerForeman.SendWorkersToCollect(_workers, _botRetriever.transform, target);
+                }
+
+                yield return delay;
+            }
         }
     }
 }

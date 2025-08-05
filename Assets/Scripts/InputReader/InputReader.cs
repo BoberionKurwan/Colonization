@@ -1,53 +1,56 @@
 using UnityEngine;
 
-public class InputReader : MonoBehaviour
+namespace InputReader
 {
-    [SerializeField] private LayerMask _clickableMask;
-
-    private Camera _camera;
-    private MainBase _choosenMainbase;
-
-    private void Awake()
+    public class InputReader : MonoBehaviour
     {
-        _camera = Camera.main;
-    }
+        [SerializeField] private LayerMask _clickableMask;
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        private Camera _camera;
+        private MainBase.MainBase _choosenMainbase;
+
+        private void Awake()
         {
-            Vector3 mousePosition = Input.mousePosition;
-            Ray ray = _camera.ScreenPointToRay(mousePosition);
+            _camera = Camera.main;
+        }
 
-            if (Physics.Raycast(ray, out RaycastHit hit))
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                if (hit.collider.TryGetComponent(out MainBase mainbase))
+                Vector3 mousePosition = Input.mousePosition;
+                Ray ray = _camera.ScreenPointToRay(mousePosition);
+
+                if (Physics.Raycast(ray, out RaycastHit hit))
                 {
-                    _choosenMainbase = mainbase;
+                    if (hit.collider.TryGetComponent(out MainBase.MainBase mainbase))
+                    {
+                        _choosenMainbase = mainbase;
+                    }
+                    else if (IsClickedOnGround(out _))
+                    {
+                        _choosenMainbase = null;
+                    }
                 }
-                else if (IsClickedOnGround(out _))
+            }
+
+            if (Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                if (IsClickedOnGround(out Vector3 groundPosition) && _choosenMainbase != null)
                 {
-                    _choosenMainbase = null;
+                    _choosenMainbase.SpawnFlag(groundPosition);
                 }
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Mouse1))
+        private bool IsClickedOnGround(out Vector3 groundPosition)
         {
-            if (IsClickedOnGround(out Vector3 groundPosition) && _choosenMainbase != null)
-            {
-                _choosenMainbase.SpawnFlag(groundPosition);
-            }
+            Vector3 pointerScreenPosition = Input.mousePosition;
+            Ray ray = _camera.ScreenPointToRay(pointerScreenPosition);
+            bool result = Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, _clickableMask.value);
+
+            groundPosition = result ? hit.point : Vector3.zero;
+            return result;
         }
-    }
-
-    private bool IsClickedOnGround(out Vector3 groundPosition)
-    {
-        Vector3 pointerScreenPosition = Input.mousePosition;
-        Ray ray = _camera.ScreenPointToRay(pointerScreenPosition);
-        bool result = Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, _clickableMask.value);
-
-        groundPosition = result ? hit.point : Vector3.zero;
-        return result;
     }
 }

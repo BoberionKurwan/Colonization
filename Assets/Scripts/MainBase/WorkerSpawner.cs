@@ -1,11 +1,19 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class WorkerSpawner : MonoBehaviour
 {
-    [SerializeField] protected Worker _prefab;
-    [SerializeField] protected Transform _spawnPoint;
+    [SerializeField] private Worker _prefab;
+    [SerializeField] private Transform _spawnPoint;
 
-    public Worker Spawn()
+    public Worker BuildWorker(Transform StorageTransform)
+    {
+        Worker newWorker = Spawn();
+        newWorker.SetStorage(StorageTransform);
+        return newWorker;
+    }
+    
+    private Worker Spawn()
     {
         return Instantiate(_prefab, _spawnPoint.position, transform.rotation);
     }
