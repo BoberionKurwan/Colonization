@@ -41,7 +41,7 @@ public class RockSpawner : MonoBehaviour
         rock.gameObject.SetActive(true);
         rock.transform.position = point.position;
         rock.Collected += ReleaseRock;
-        rock.SpawnPoint = point;
+        rock.SetSpawnPoint(point);
 
         return rock;
     }

@@ -323,6 +323,11 @@ Transform:
   - {fileID: 1817184325}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
+--- !u!4 &111333248 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7559346589026697659, guid: 8839d5f584dc2a14299b9a1a6cc6beb3, type: 3}
+  m_PrefabInstance: {fileID: 6977671453236407069}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &129890134
 GameObject:
   m_ObjectHideFlags: 0
@@ -3233,6 +3238,14 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 330585545}
+    - target: {fileID: 1001621137150191061, guid: 8839d5f584dc2a14299b9a1a6cc6beb3, type: 3}
+      propertyPath: Prefab
+      value: 
+      objectReference: {fileID: 7520818101580198157, guid: f0874a21221121e459cf292898bc774c, type: 3}
+    - target: {fileID: 1001621137150191061, guid: 8839d5f584dc2a14299b9a1a6cc6beb3, type: 3}
+      propertyPath: SpawnPoint
+      value: 
+      objectReference: {fileID: 111333248}
     - target: {fileID: 1059135666565733966, guid: 8839d5f584dc2a14299b9a1a6cc6beb3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 13.75
@@ -3289,6 +3302,10 @@ PrefabInstance:
       propertyPath: _workers.Array.size
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 5656759711241493732, guid: 8839d5f584dc2a14299b9a1a6cc6beb3, type: 3}
+      propertyPath: _resourcesRepository
+      value: 
+      objectReference: {fileID: 765028779}
     - target: {fileID: 5656759711241493732, guid: 8839d5f584dc2a14299b9a1a6cc6beb3, type: 3}
       propertyPath: '_workers.Array.data[0]'
       value: 

@@ -96,21 +96,33 @@ namespace MainBase
             _storage.StoreRock(rock);
             RockDelivered?.Invoke(rock);
 
-            if (_flagPlacer.IsFlagActive && _storage.CollectedCount >= _basePrice && _workers.Count > _workerMinCount)
+
+            if (_flagPlacer.IsFlagActive)
             {
-                Worker freeWorker = _workers.FirstOrDefault(w => w.IsFree);
-                _workerForeman.SendWorkerToBuild(freeWorker, _flagPlacer.GetFlagPosition());
-                _flagPlacer.SetWorker(freeWorker);
+                if (_storage.CollectedCount >= _basePrice && _workers.Count > _workerMinCount)
+                {
+                    Worker freeWorker = _workers.FirstOrDefault(w => w.IsFree);
+                    _workerForeman.SendWorkerToBuild(freeWorker, _flagPlacer.GetFlagPosition());
+                    _flagPlacer.SetWorker(freeWorker);
+                }
+                else if (_storage.CollectedCount >= _workerPrice && _workers.Count == _workerMinCount)
+                {
+                    _storage.SpendResources(_workerPrice);
+                    _workers.Add(_workerSpawner.BuildWorker(_botRetriever.transform));
+                }
+                else
+                {
+                    _workerForeman.SendWorkersToCollect(_workers, _botRetriever.transform, _resourcesRepository);
+                }
             }
             else if (_storage.CollectedCount >= _workerPrice)
             {
                 _storage.SpendResources(_workerPrice);
                 _workers.Add(_workerSpawner.BuildWorker(_botRetriever.transform));
             }
-            else if (_resourcesRepository.TryGetRock(out Rock targetRock))
+            else
             {
-                Transform target = targetRock.transform;
-                _workerForeman.SendWorkersToCollect(_workers, _botRetriever.transform, target);
+                _workerForeman.SendWorkersToCollect(_workers, _botRetriever.transform, _resourcesRepository);
             }
         }
 
@@ -120,11 +132,7 @@ namespace MainBase
 
             while (enabled)
             {
-                if (_resourcesRepository.TryGetRock(out Rock targetRock))
-                {
-                    Transform target = targetRock.transform;
-                    _workerForeman.SendWorkersToCollect(_workers, _botRetriever.transform, target);
-                }
+                _workerForeman.SendWorkersToCollect(_workers, _botRetriever.transform, _resourcesRepository);
 
                 yield return delay;
             }

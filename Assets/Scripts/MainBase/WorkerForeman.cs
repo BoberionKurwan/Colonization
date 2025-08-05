@@ -5,7 +5,7 @@ namespace MainBase
 {
     public class WorkerForeman : MonoBehaviour
     {
-        public void SendWorkersToCollect(List<Worker> workers, Transform storageTransform, Transform target)
+        public void SendWorkersToCollect(List<Worker> workers, Transform storageTransform, ResourcesRepository resoucesRepository)
         {
             for (int i = 0; i < workers.Count; i++)
             {
@@ -14,7 +14,10 @@ namespace MainBase
 
                 if (workers[i].IsFree)
                 {
-                    workers[i].SetTarget(target);
+                    if (resoucesRepository.TryGetRock(out Rock rock))
+                    {
+                        workers[i].SetTarget(rock.transform);
+                    }
                 }
             }
         }
